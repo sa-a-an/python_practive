@@ -14,18 +14,18 @@ class Segment():
     def __init__(self, x: int, y: int, color: Tuple[int, int, int] = WHITE):
         self._x         = x
         self._y         = y
-        self._direction = ButtonType.UP
+        self._direction = DirectionType.UP
         self._color     = color
 
     def __repr__(self) -> str:
         return f"""Segmrnt(x: {self._x}, y: {self._y}, direction: {self._direction})"""
 
     @property
-    def direction(self) -> ButtonType:
+    def direction(self) -> DirectionType:
         return self._direction
 
     @direction.setter
-    def direction(self, new_dirrection: ButtonType) -> None:
+    def direction(self, new_dirrection: DirectionType) -> None:
         self._direction = new_dirrection
 
     @property
@@ -52,7 +52,7 @@ class Segment():
     def y(self, new_y: int) -> None:
         self._y = new_y
 
-class Snake():
+class Snake(Segment):
     """
         Snake player object
     """
@@ -60,8 +60,9 @@ class Snake():
     def __init__(self, x: int, y: int):
         self._x         = x
         self._y         = y
-        self._direction = ButtonType.UP
-        self._stack     = [ Segment(self._x, self._y, color=GREEN), Segment(self._x, self._y + SNAKE_SIZE),
+        self._direction = DirectionType.UP
+        self._color     = GREEN
+        self._stack     = [ self, Segment(self._x, self._y + SNAKE_SIZE),
                             Segment(self._x - SNAKE_SIZE, self._y + SNAKE_SIZE), Segment(self._x - SNAKE_SIZE * 2, self._y + SNAKE_SIZE),
                             Segment(self._x - SNAKE_SIZE * 4, self._y + SNAKE_SIZE)]
         
@@ -75,19 +76,20 @@ class Snake():
         """
 
     #TODO: rewrite this
-    def move(self) -> None:
+    def move(self, direction: DirectionType | None ) -> None:
+        self.__set_direction(direction)
         previcious_x, previcious_y =  self._stack[0].x,  self._stack[0].y
         current_x, current_y = 0, 0
         for index, element in enumerate(self._stack):
             
             if index == 0:
-                if (self._stack[0].direction == ButtonType.UP):
+                if (self._stack[0].direction == DirectionType.UP):
                     element.y = self._stack[0].y - (SNAKE_SIZE)
-                if (self._stack[0].direction == ButtonType.DOWN):
+                if (self._stack[0].direction == DirectionType.DOWN):
                     element.y = self._stack[0].y + (SNAKE_SIZE)
-                if (self._stack[0].direction == ButtonType.LEFT):
+                if (self._stack[0].direction == DirectionType.LEFT):
                     element.x = self._stack[0].x - (SNAKE_SIZE)
-                if (self._stack[0].direction == ButtonType.RIGHT):
+                if (self._stack[0].direction == DirectionType.RIGHT):
                     element.x = self._stack[0].x + (SNAKE_SIZE)
             else:
                 current_x, current_y = element.x, element.y
@@ -128,43 +130,34 @@ class Snake():
     def grow(self) -> None:
         last_element = len(self._stack) - 1
         self._stack[last_element].direction = self._stack[last_element].direction
-        if (self._stack[0].direction == ButtonType.UP):
+        if (self._stack[0].direction == DirectionType.UP):
             new_segment = Segment(self._stack[last_element].x, self._stack[last_element].y - SNAKE_SIZE)
-        if (self._stack[0].direction == ButtonType.DOWN):
+        if (self._stack[0].direction == DirectionType.DOWN):
             new_segment = Segment(self._stack[last_element].x, self._stack[last_element].y + SNAKE_SIZE)
-        if (self._stack[0].direction == ButtonType.LEFT):
+        if (self._stack[0].direction == DirectionType.LEFT):
             new_segment = Segment(self._stack[last_element].x - SNAKE_SIZE, self._stack[last_element].y)
-        if (self._stack[0].direction == ButtonType.RIGHT):
+        if (self._stack[0].direction == DirectionType.RIGHT):
             new_segment = Segment(self._stack[last_element].x + SNAKE_SIZE, self._stack[last_element].y)
         
         self._stack.append(new_segment)
 
     #TODO: rewrite this
-    def set_direction(self, direction: ButtonType):
-        left    = ButtonType.LEFT
-        right   = ButtonType.RIGHT
-        up      = ButtonType.UP
-        down    = ButtonType.DOWN
-        if self._direction == left and direction == right or \
-            self._direction == right and direction == left:
-            pass
-        elif self._direction == up and direction == down or \
-                self._direction == down and direction == up:
+    def __set_direction(self, direction: DirectionType):
+        if direction == None or not isinstance(direction, DirectionType):
             pass
         else:
-            self._direction = direction
+            if self._direction == DirectionType.LEFT and direction == DirectionType.RIGHT or \
+                self._direction == DirectionType.RIGHT and direction == DirectionType.LEFT:
+                pass
+            elif self._direction == DirectionType.UP and direction == DirectionType.DOWN or \
+                    self._direction == DirectionType.DOWN and direction == DirectionType.UP:
+                pass
+            else:
+                self._direction = direction
 
     def get_rect(self)-> Tuple[int,int]:
         rect = (self._x, self._y)
         return rect
-
-    @property
-    def x(self):
-        return self._x
-    
-    @property
-    def y(self):
-        return self._y
 
     def draw(self, screen: pygame.display):
         for element in self._stack:

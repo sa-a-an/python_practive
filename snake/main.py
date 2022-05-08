@@ -46,23 +46,23 @@ def check_limits(snake):
     
 
 
-def getKeys() -> ButtonType :
+def getKeys() -> DirectionType | SystemButtonType:
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
-                return ButtonType.UP
+                return DirectionType.UP
             if event.key == pygame.K_DOWN:
-                return ButtonType.DOWN
+                return DirectionType.DOWN
             if event.key == pygame.K_LEFT:
-                return ButtonType.LEFT
+                return DirectionType.LEFT
             if event.key == pygame.K_RIGHT:
-                return ButtonType.RIGHT
+                return DirectionType.RIGHT
             if event.key == pygame.K_ESCAPE:
-                return ButtonType.EXIT
+                return SystemButtonType.EXIT
             if event.key == pygame.K_y:
-                return ButtonType.YES
+                return SystemButtonType.YES
             if event.key == pygame.K_n:
-                return ButtonType.NO
+                return SystemButtonType.NO
         if event.type == pygame.QUIT:
             sys.exit(0)
 
@@ -77,10 +77,10 @@ def end_game() -> None:
     pygame.display.update()
 
     mKey = getKeys()
-    while(mKey != ButtonType.EXIT):
-        if mKey == ButtonType.YES: 
+    while(mKey != SystemButtonType.EXIT):
+        if mKey == SystemButtonType.YES: 
             main()
-        elif mKey == ButtonType.NO:
+        elif mKey == SystemButtonType.NO:
             break
         mKey = getKeys()
         gameClock.tick(FPS)
@@ -103,10 +103,10 @@ def main():
     my_snake = Snake(SCREEN_WIDTH_CENTER,SCREEN_WIDTH_CENTER)
     while is_game_on:
         key_pressed = getKeys()        
-        if key_pressed == ButtonType.EXIT:
+        if key_pressed == SystemButtonType.EXIT:
             pygame.QUIT()
 
-        my_snake.move()
+        my_snake.move(key_pressed)
         my_snake.draw(screen)
 
         gameClock.tick(FPS)

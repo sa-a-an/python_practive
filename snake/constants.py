@@ -23,11 +23,13 @@ YELLOW  = (255, 165, 0)
 SCREEN_HEIGHT_CENTER = SCREEN_HEIGHT / 2
 SCREEN_WIDTH_CENTER  = SCREEN_WIDTH / 2
 
-class ButtonType(enum.Enum):
+class DirectionType(enum.Enum):
     UP      = enum.auto()
     DOWN    = enum.auto()
     LEFT    = enum.auto()
     RIGHT   = enum.auto()
+
+class SystemButtonType(enum.Enum):
     EXIT    = enum.auto()
     YES     = enum.auto()
     NO      = enum.auto()
