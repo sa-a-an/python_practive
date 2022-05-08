@@ -15,7 +15,7 @@ pygame.init()
 pygame.display.set_caption('My First Snake Game')
 pygame.font.init()
 
-screen = pygame.display.set_mode((SCREEN_HEIGHT,SCREEN_WIDTH), pygame.HWSURFACE)
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.HWSURFACE)
 
 score_font      = pygame.font.Font(None, 38)
 score_num_font  = pygame.font.Font(None, 28)
@@ -33,18 +33,6 @@ def check_collision(pos_a: int, size_a: int, pos_b: int, size_b: int) -> bool:
         and pos_a.y < pos_b.y * size_b and pos_a.y * size_a > pos_b.y :
         return True
     return False
-
-def check_limits(snake):
-    if snake.x > SCREEN_WIDTH:
-        snake.x = SNAKE_SIZE
-    if snake.x < 0:
-        snake.x = SCREEN_WIDTH - SNAKE_SIZE
-    if snake.y > SCREEN_HEIGHT:
-        snake.y = SNAKE_SIZE
-    if snake.y < 0:
-        snake.y = SCREEN_HEIGHT - SNAKE_SIZE
-    
-
 
 def getKeys() -> DirectionType | SystemButtonType:
     for event in pygame.event.get():
@@ -104,11 +92,9 @@ def main():
     while is_game_on:
         key_pressed = getKeys()        
         if key_pressed == SystemButtonType.EXIT:
-            pygame.QUIT()
+            pygame.quit()
 
-        my_snake.move(key_pressed)
-        my_snake.draw(screen)
-
+        my_snake.run(key_pressed, screen)
         gameClock.tick(FPS)
         
         pygame.display.flip()

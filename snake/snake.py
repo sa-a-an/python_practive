@@ -75,73 +75,43 @@ class Snake(Segment):
         return f"""Snake(x: {self._x}, y: {self._y}, direction: {self._direction}, stack: {self._stack})
         """
 
-    #TODO: rewrite this
-    def move(self, direction: DirectionType | None ) -> None:
-        self.__set_direction(direction)
-        previcious_x, previcious_y =  self._stack[0].x,  self._stack[0].y
+    def __get_head(self) -> Segment:
+        return self._stack[0]
+
+    def __move(self) -> None:
+        previcious_x, previcious_y =  self.__get_head().x,  self.__get_head().y
         current_x, current_y = 0, 0
         for index, element in enumerate(self._stack):
-            
             if index == 0:
-                if (self._stack[0].direction == DirectionType.UP):
-                    element.y = self._stack[0].y - (SNAKE_SIZE)
-                if (self._stack[0].direction == DirectionType.DOWN):
-                    element.y = self._stack[0].y + (SNAKE_SIZE)
-                if (self._stack[0].direction == DirectionType.LEFT):
-                    element.x = self._stack[0].x - (SNAKE_SIZE)
-                if (self._stack[0].direction == DirectionType.RIGHT):
-                    element.x = self._stack[0].x + (SNAKE_SIZE)
+                if (self.__get_head().direction == DirectionType.UP):
+                    element.y = self.__get_head().y - (SPEED)
+                if (self.__get_head().direction == DirectionType.DOWN):
+                    element.y = self.__get_head().y + (SPEED)
+                if (self.__get_head().direction == DirectionType.LEFT):
+                    element.x = self.__get_head().x - (SPEED)
+                if (self.__get_head().direction == DirectionType.RIGHT):
+                    element.x = self.__get_head().x + (SPEED)
             else:
                 current_x, current_y = element.x, element.y
                 element.x = previcious_x
                 element.y = previcious_y
                 previcious_x, previcious_y = current_x, current_y
 
-        logger.info(self)
-        # last_element = len(self._stack) - 1
-        # logger.info(self._stack[0])
-        # while (last_element != 0):
-        #     self._stack[last_element].direction = self._stack[last_element].direction 
-        #     self._stack[last_element].x         = self._stack[last_element - 1].x
-        #     self._stack[last_element].y         = self._stack[last_element - 1].y
-        #     last_element                        = last_element - 1 
-        # if len(self._stack) < 2:
-        #     last_segment = self._stack[0]
-        # else:
-        #     logger.info("Popping ITEM <---")
-        #     last_segment = self._stack.pop(last_element)
-
-        # last_segment._direction = self._stack[0].direction
-        # if (self._stack[0].direction == ButtonType.UP):
-        #     last_segment.y = self._stack[0].y - (SPEED * FPS)
-        # if (self._stack[0].direction == ButtonType.DOWN):
-        #     last_segment.y = self._stack[0].y + (SPEED * FPS)
-        # if (self._stack[0].direction == ButtonType.LEFT):
-        #     last_segment.x = self._stack[0].x - (SPEED * FPS)
-        # if (self._stack[0].direction == ButtonType.RIGHT):
-        #     last_segment.x = self._stack[0].x + (SPEED * FPS)
-        
-        # self._stack.insert(0, last_element)
-
-    def get_head(self) -> Segment:
-        return self._stack[0]
-
     #TODO: rewrite this
     def grow(self) -> None:
         last_element = len(self._stack) - 1
         self._stack[last_element].direction = self._stack[last_element].direction
-        if (self._stack[0].direction == DirectionType.UP):
+        if (self.__get_head().direction == DirectionType.UP):
             new_segment = Segment(self._stack[last_element].x, self._stack[last_element].y - SNAKE_SIZE)
-        if (self._stack[0].direction == DirectionType.DOWN):
+        if (self.__get_head().direction == DirectionType.DOWN):
             new_segment = Segment(self._stack[last_element].x, self._stack[last_element].y + SNAKE_SIZE)
-        if (self._stack[0].direction == DirectionType.LEFT):
+        if (self.__get_head().direction == DirectionType.LEFT):
             new_segment = Segment(self._stack[last_element].x - SNAKE_SIZE, self._stack[last_element].y)
-        if (self._stack[0].direction == DirectionType.RIGHT):
+        if (self.__get_head().direction == DirectionType.RIGHT):
             new_segment = Segment(self._stack[last_element].x + SNAKE_SIZE, self._stack[last_element].y)
         
         self._stack.append(new_segment)
 
-    #TODO: rewrite this
     def __set_direction(self, direction: DirectionType):
         if direction == None or not isinstance(direction, DirectionType):
             pass
@@ -162,3 +132,19 @@ class Snake(Segment):
     def draw(self, screen: pygame.display):
         for element in self._stack:
             pygame.draw.rect(screen,element.color,(element.x,element.y,SNAKE_SIZE,SNAKE_SIZE),0)
+
+    def __check_border(self):
+        if self.x > SCREEN_WIDTH:
+            self.x = SNAKE_SIZE
+        if self.x < 0:
+            self.x = SCREEN_WIDTH - SNAKE_SIZE
+        if self.y > SCREEN_HEIGHT:
+            self.y = SNAKE_SIZE
+        if self.y < 0:
+            self.y = SCREEN_HEIGHT - SNAKE_SIZE
+
+    def run(self, direction: DirectionType | None, screen: pygame.display ) -> None:
+        self.__set_direction(direction)
+        self.__check_border()
+        self.__move()
+        self.draw(screen)

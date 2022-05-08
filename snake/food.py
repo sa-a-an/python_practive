@@ -10,3 +10,6 @@ class Apple():
 
     def draw(self, screen: pygame.display):
         pygame.draw.rect(screen, ORRANGE, (self._x, self._y, APPLE_SIZE, APPLE_SIZE),0)
+    
+    def spawn_apple(self):
+        pass

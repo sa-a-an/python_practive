@@ -4,13 +4,13 @@ import enum
 import enum
 from tkinter import RIGHT
 
-SPEED = 0.30
-SNAKE_SIZE    = 20
+SPEED         = 10
+SNAKE_SIZE    = 10
 APPLE_SIZE    = SNAKE_SIZE
 SEPARATION    = 1
 SCREEN_HEIGHT = 600
 SCREEN_WIDTH  = 800
-FPS           = 1
+FPS           = 2
 MSG_PADDING   = 20
 
 BLACK   = (0, 0, 0)
